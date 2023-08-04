@@ -5,8 +5,8 @@ const StreamSource = std.io.StreamSource;
 
 const BYTES_PER_LINE_MAX = std.math.maxInt(u5) * @intFromEnum(BlockSize.bs_32) * @intFromEnum(ValueSize.vs_8); // Options.blocks_per_line => u5
 
-pub const ValueSize = enum(u32) { vs_1 = 1, vs_2 = 2, vs_4 = 4, vs_8 = 8 };
-pub const BlockSize = enum(u32) { bs_1 = 1, bs_2 = 2, bs_4 = 4, bs_8 = 8, bs_16 = 16, bs_32 = 32 };
+pub const ValueSize = enum(u64) { vs_1 = 1, vs_2 = 2, vs_4 = 4, vs_8 = 8 };
+pub const BlockSize = enum(u64) { bs_1 = 1, bs_2 = 2, bs_4 = 4, bs_8 = 8, bs_16 = 16, bs_32 = 32 };
 pub const Options = struct {
     length: u64 = std.math.maxInt(u64),
     offset: i64 = 0,
@@ -166,7 +166,7 @@ fn writeValue(options: Options, reader: anytype, writer: anytype, tty_config: tt
     var value: T = buffer[0];
     // read a value that may or may not be incomplete
     if (T != u8) {
-        var i: usize = 1;
+        var i: u64 = 1;
         while (i < bytes_read) : (i += 1) {
             if (options.endianess == Endian.Big) {
                 value = (value << 8) | buffer[i];
@@ -187,7 +187,7 @@ fn writeValue(options: Options, reader: anytype, writer: anytype, tty_config: tt
 
     const bytes_in_value = @intFromEnum(options.value_size);
 
-    var i: usize = 0;
+    var i: u64 = 0;
     while (i < (bytes_in_value - bytes_read)) : (i += 1) {
         _ = try writer.write("??");
     }
@@ -235,6 +235,7 @@ fn getSubBuffer(options: Options, buffer: *[BYTES_PER_LINE_MAX]u8, bytes_in_buff
 }
 
 // options.offset already applied to reader
+// return number of bytes written (not yet supported with std.fmt.format)
 fn write(options: Options, reader: anytype, writer: anytype, tty_config: tty.Config, offset: u64) !void {
     if (options.length == 0) {
         return;
@@ -296,6 +297,9 @@ fn write(options: Options, reader: anytype, writer: anytype, tty_config: tty.Con
 
 pub fn run(options: Options, input: *StreamSource, writer: anytype, tty_config: tty.Config) !void {
     const input_size = try input.getEndPos();
+    if (input_size == 0) {
+        return;
+    }
 
     var offset = if (options.offset < 0) blk: {
         const offset_from_end = std.math.absCast(options.offset);
@@ -306,8 +310,8 @@ pub fn run(options: Options, input: *StreamSource, writer: anytype, tty_config: 
 
     var options_modified = options;
     if (offset >= input_size) {
-        offset = 0;
-        options_modified.length = input_size;
+        offset = input_size;
+        options_modified.length = 0;
     } else if (input_size - offset < options.length) {
         options_modified.length = input_size - offset;
     }

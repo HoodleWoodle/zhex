@@ -31,7 +31,7 @@ OPTIONS:
                                  Default: little
    -B --no-borders               Do not show borders. Shown by default.
    -P --no-position              Do not show positions. Shown by default.
-   -C --no-charcters             Do not show characters. Shown by default.
+   -C --no-characters            Do not show characters. Shown by default.
       --no-color                 Disable colorization. Enabled by default.
 
    -v --version                  Show the version of the zhex binary.
