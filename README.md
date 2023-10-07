@@ -45,6 +45,7 @@ OPTIONS:
 ## todo
 
 - [feature] command line parsing is not implemented yet (but the options are implemented in code - just change the Options-struct default values)
+- [feature] allow arbitrary blocks_per_line (u5)
 - [feature] option to highlight byte intervals
 - [feature] custom colorization
 - [fix] do not show empty blocks with one line outputs
