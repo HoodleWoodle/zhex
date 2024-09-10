@@ -234,10 +234,10 @@ test "ValueSize.vs_8 [length = 64, BlockSize.bs_1]" {
     try testIO(options, &input_default, output_expected);
 }
 
-test "ValueSize.vs_4, Endian.Little [length = 64, BlockSize.bs_2]" {
+test "ValueSize.vs_4, Endian.little [length = 64, BlockSize.bs_2]" {
     const options = zhex.Options{
         .value_size = zhex.ValueSize.vs_4,
-        .endianess = Endian.Little,
+        .endianess = Endian.little,
         // --------------------------------
         .length = 64,
         .block_size = zhex.BlockSize.bs_2,
@@ -255,14 +255,14 @@ test "ValueSize.vs_4, Endian.Little [length = 64, BlockSize.bs_2]" {
     try testIO(options, &input_default, output_expected);
 }
 
-test "ValueSize.vs_8, no_borders [length = 64, BlockSize.bs_2, Endian.Little]" {
+test "ValueSize.vs_8, no_borders [length = 64, BlockSize.bs_2, Endian.little]" {
     const options = zhex.Options{
         .value_size = zhex.ValueSize.vs_4,
         .no_borders = true,
         // --------------------------------
         .length = 64,
         .block_size = zhex.BlockSize.bs_2,
-        .endianess = Endian.Little,
+        .endianess = Endian.little,
     };
     const output_expected =
         \\00000000  03020100 07060504   0b0a0908 0f0e0d0c  •••••••• ••••••••

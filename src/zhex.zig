@@ -13,7 +13,7 @@ pub const Options = struct {
     block_size: BlockSize = BlockSize.bs_8,
     blocks_per_line: u5 = 2,
     value_size: ValueSize = ValueSize.vs_1,
-    endianess: Endian = Endian.Big, // same as Intel 4004
+    endianess: Endian = Endian.big, // same as Intel 4004
     no_borders: bool = false,
     no_position: bool = false,
     no_characters: bool = false,
@@ -97,7 +97,7 @@ fn writeValues(options: Options, writer: anytype, tty_config: tty.Config, buffer
     const bytes_in_value = @intFromEnum(options.value_size);
 
     var stream = std.io.fixedBufferStream(buffer);
-    var reader = stream.reader();
+    const reader = stream.reader();
 
     if (!(is_first_in_line and options.no_borders)) {
         _ = try writer.write(" ");
@@ -168,7 +168,7 @@ fn writeValue(options: Options, reader: anytype, writer: anytype, tty_config: tt
     if (T != u8) {
         var i: u64 = 1;
         while (i < bytes_read) : (i += 1) {
-            if (options.endianess == Endian.Big) {
+            if (options.endianess == Endian.big) {
                 value = (value << 8) | buffer[i];
             } else {
                 const shift = std.math.lossyCast(std.math.Log2Int(T), i * 8);
@@ -181,7 +181,7 @@ fn writeValue(options: Options, reader: anytype, writer: anytype, tty_config: tt
         try tty.Config.setColor(tty_config, writer, tty.Color.dim);
     }
 
-    if (options.endianess == Endian.Big) {
+    if (options.endianess == Endian.big) {
         try formatValue(writer, bytes_read, value);
     }
 
@@ -192,7 +192,7 @@ fn writeValue(options: Options, reader: anytype, writer: anytype, tty_config: tt
         _ = try writer.write("??");
     }
 
-    if (options.endianess == Endian.Little) {
+    if (options.endianess == Endian.little) {
         try formatValue(writer, bytes_read, value);
     }
 
@@ -302,7 +302,7 @@ pub fn run(options: Options, input: *StreamSource, writer: anytype, tty_config: 
     }
 
     var offset = if (options.offset < 0) blk: {
-        const offset_from_end = std.math.absCast(options.offset);
+        const offset_from_end = @abs(options.offset);
         if (offset_from_end < input_size)
             break :blk input_size - offset_from_end;
         break :blk 0;
