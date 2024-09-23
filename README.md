@@ -1,6 +1,6 @@
 # zhex
 
-This is a command-line hex-viewer written in the [Zig](https://ziglang.org/) programming language with version v0.11.0 (originally) and v0.13.0 (currently).
+This is a command-line hex-viewer written in the [Zig](https://ziglang.org/) programming language.
 
 ## arguments
 
